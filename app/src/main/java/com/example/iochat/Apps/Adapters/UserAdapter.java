@@ -1,4 +1,4 @@
-package com.example.iochat.Adapters;
+package com.example.iochat.Apps.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.iochat.ChatDetailActivity;
-import com.example.iochat.Models.Users;
+import com.example.iochat.Apps.ChatDetailActivity;
+import com.example.iochat.Apps.Models.Users;
 import com.example.iochat.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;

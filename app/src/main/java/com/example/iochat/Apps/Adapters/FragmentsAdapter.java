@@ -1,4 +1,4 @@
-package com.example.iochat.Adapters;
+package com.example.iochat.Apps.Adapters;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -6,9 +6,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.example.iochat.Fragments.CallsFragment;
-import com.example.iochat.Fragments.ChatsFragment;
-import com.example.iochat.Fragments.StatusFragment;
+
+import com.example.iochat.Apps.Fragments.ChatsFragment;
+import com.example.iochat.Apps.Fragments.StatusFragment;
+
 
 public class FragmentsAdapter extends FragmentPagerAdapter {
     public FragmentsAdapter(@NonNull FragmentManager fm) {
@@ -23,7 +24,6 @@ public class FragmentsAdapter extends FragmentPagerAdapter {
         switch (position){
             case 0 : return new ChatsFragment();
             case 1 : return new StatusFragment();
-            case 2 : return new CallsFragment();
             default: return new ChatsFragment();
         }
     }
@@ -31,7 +31,7 @@ public class FragmentsAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
 
-        return 3;
+        return 2;
     }
 
     @Nullable
@@ -44,9 +44,7 @@ public class FragmentsAdapter extends FragmentPagerAdapter {
         if(position==1){
             title="STATUS";
         }
-        if(position==2){
-            title="CALLS";
-        }
+
         return title;
     }
 }

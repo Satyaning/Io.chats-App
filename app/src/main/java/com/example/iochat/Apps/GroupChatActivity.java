@@ -1,4 +1,4 @@
-package com.example.iochat;
+package com.example.iochat.Apps;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,8 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.iochat.Adapters.ChatAdapter;
-import com.example.iochat.Models.MessageModel;
+import com.example.iochat.Apps.Adapters.ChatAdapter;
+import com.example.iochat.Apps.Models.MessageModel;
 import com.example.iochat.databinding.ActivityGroupChatBinding;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;

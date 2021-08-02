@@ -1,15 +1,17 @@
-package com.example.iochat;
+package com.example.iochat.Apps;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-
-import com.example.iochat.Adapters.ChatAdapter;
-import com.example.iochat.Models.MessageModel;
+import com.example.iochat.Apps.Adapters.ChatAdapter;
+import com.example.iochat.Apps.Models.MessageModel;
+import com.example.iochat.R;
 import com.example.iochat.databinding.ActivityChatDetailBinding;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -55,7 +57,7 @@ public class ChatDetailActivity extends AppCompatActivity {
 
         final ArrayList<MessageModel> messageModels = new ArrayList<>();
 
-        final ChatAdapter chatAdapter = new ChatAdapter(messageModels,this);
+        final ChatAdapter chatAdapter = new ChatAdapter(messageModels,this,receiveId);
         binding.chatRecyclarView.setAdapter(chatAdapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -73,6 +75,7 @@ public class ChatDetailActivity extends AppCompatActivity {
                         for (DataSnapshot snapshot1 : snapshot.getChildren())
                         {
                             MessageModel model = snapshot1.getValue(MessageModel.class);
+                            model.setMessageId(snapshot1.getKey());
 
                             messageModels.add(model);
                         }
@@ -81,35 +84,44 @@ public class ChatDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
+                        if(binding.etMessage.length()==0) {
+                            binding.etMessage.setError("enter message");
+                        } else{
+                            Toast.makeText(ChatDetailActivity.this, "", Toast.LENGTH_SHORT).show();
+                        }
+                        return;
                     }
                 });
 
         binding.send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               String message=  binding.etMessage.getText().toString();
-               final MessageModel model = new MessageModel(senderId, message);
-               model.setTimestamp(new Date().getTime());
-               binding.etMessage.setText("");
 
-               database.getReference().child("chats")
-                       .child(senderRoom)
-                       .push()
-                       .setValue(model).addOnSuccessListener(new OnSuccessListener<Void>() {
-                   @Override
-                   public void onSuccess(Void aVoid) {
-                    database.getReference().child("chats")
-                            .child(receiverRoom)
-                            .push()
-                            .setValue(model).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
+                    String message = binding.etMessage.getText().toString();
 
-                        }
-                    });
-                   }
-               });
+                    final MessageModel model = new MessageModel(senderId, message);
+                    model.setTimestamp(new Date().getTime());
+
+                database.getReference().child("chats")
+                        .child(senderRoom)
+                        .push()
+                        .setValue(model)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        database.getReference().child("chats")
+                                .child(receiverRoom)
+                                .push()
+                                .setValue(model).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                            }
+                        });
+                    }
+                });
+
+
             }
         });
 

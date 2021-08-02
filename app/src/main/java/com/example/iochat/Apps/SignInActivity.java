@@ -1,4 +1,4 @@
-package com.example.iochat;
+package com.example.iochat.Apps;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,8 +10,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.iochat.Models.Users;
-import com.example.iochat.databinding.ActivitySignUpBinding;
+import com.example.iochat.Apps.Models.Users;
+import com.example.iochat.R;
+import com.example.iochat.databinding.ActivitySignInBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -27,73 +28,84 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class SignUpActivity extends AppCompatActivity {
+import static android.content.ContentValues.TAG;
 
-    ActivitySignUpBinding binding;
-    private FirebaseAuth auth;
-    FirebaseDatabase database;
+public class SignInActivity extends AppCompatActivity {
+
+    ActivitySignInBinding binding;
     ProgressDialog progressDialog;
+    FirebaseAuth auth ;
     GoogleSignInClient mGoogleSignInClient;
+    FirebaseDatabase database;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivitySignUpBinding.inflate(getLayoutInflater());
+        binding = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         getSupportActionBar().hide();
+
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
 
-        progressDialog = new ProgressDialog(SignUpActivity.this);
-        progressDialog.setTitle("Creating Account");
-        progressDialog.setMessage("We're creating your account");
 
-        // Configure Google Sign In (First source code we coppy in FirebaseTutorialWeb)
+        progressDialog = new ProgressDialog(SignInActivity.this);
+        progressDialog.setTitle("Login");
+        progressDialog.setMessage("Login to your account");
+
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
+
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        binding.btnSignUp.setOnClickListener(new View.OnClickListener() {
+
+        binding.btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(binding.etEmailLogin.getText().toString().isEmpty()){
+                    binding.etEmailLogin.setError("Enter your email");
+                    return;
+                }
+
+                if(binding.etPassword.getText().toString().isEmpty()){
+                    binding.etPassword.setError("Enter your password");
+                    return;
+                }
+
                 progressDialog.show();
-                auth.createUserWithEmailAndPassword
-                        (binding.etEmail.getText().toString() , binding.etPassword.getText().toString())
+                auth.signInWithEmailAndPassword(binding.etEmailLogin.getText().toString(), binding.etPassword.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                     progressDialog.dismiss();
-                        if(task.isSuccessful()){
-                            Users user = new Users(binding.etUserName.getText().toString(), binding.etEmail.getText().toString() ,
-                                    binding.etPassword.getText().toString());
-
-                            String id = task.getResult().getUser().getUid();
-                            database.getReference().child("Users").child(id).setValue(user);
-                            Toast.makeText(SignUpActivity.this, "User Created Successfully",Toast.LENGTH_SHORT).show();
-
-                            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-                            startActivity(intent);
-                        }
-                        else{
-                            Toast.makeText(SignUpActivity.this,task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                progressDialog.dismiss();
+                                if (task.isSuccessful())
+                                {
+                                    Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                }
+                                else{
+                                    Toast.makeText(SignInActivity.this , task.getException().getMessage(), Toast.LENGTH_SHORT);
+                                }
+                            }
+                        });
             }
         });
 
-        binding.tvAlreadyAccount.setOnClickListener(new View.OnClickListener() {
+        binding.tvClickSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
+                Intent intent = new Intent(SignInActivity.this, SignUpActivity.class);
                 startActivity(intent);
             }
         });
+
 
         binding.btnGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,12 +114,21 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+        if(auth.getCurrentUser()!=null)
+        {
+            Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+
+
     }
+
     int RC_SIGN_IN = 65;
     private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        Intent signInIntent= mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -119,14 +140,15 @@ public class SignUpActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                Log.d("TAG", "firebaseAuthWithGoogle:" + account.getId());
+                Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
-                Log.w("TAG", "Google sign in failed", e);
+                Log.w(TAG, "Google sign in failed", e);
             }
         }
     }
+
 
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
@@ -136,26 +158,27 @@ public class SignUpActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("TAG", "signInWithCredential:success");
+                            //Log.d("TAG", "signInWithCredential:success");
                             FirebaseUser user = auth.getCurrentUser();
-                            Users users =new Users();
+                            Users users = new Users();
                             users.setUserId(user.getUid());
                             users.setUserName(user.getDisplayName());
                             users.setProfilepic(user.getPhotoUrl().toString());
                             database.getReference().child("Users").child(user.getUid()).setValue(users);
 
-                            Intent intent = new Intent(SignUpActivity.this,MainActivity.class);
+                            Intent intent = new Intent(SignInActivity.this,MainActivity.class);
                             startActivity(intent);
-                            Toast.makeText(SignUpActivity.this, "Sign in with Google", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignInActivity.this, "Sign in with Google", Toast.LENGTH_SHORT).show();
                             //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("TAG", "signInWithCredential:failure", task.getException());
-                            Toast.makeText(SignUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            //Log.w("TAG", "signInWithCredential:failure", task.getException());
+                            Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             Snackbar.make(binding.getRoot(),"Authenthification Failed",Snackbar.LENGTH_SHORT).show();
                             //updateUI(null);
                         }
                     }
                 });
     }
+
 }

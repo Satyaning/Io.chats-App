@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GroupChatActivity"
+    tools:context=".Apps.GroupChatActivity"
     android:background="@color/darkbackground">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -25,19 +25,20 @@
             android:id="@+id/etMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
             android:layout_weight="1"
             android:background="@drawable/bg_et_message"
             android:ems="10"
             android:hint="Enter your Message"
-            android:inputType="textPersonName"
+            android:inputType="textMultiLine"
             android:padding="10dp"
-            android:textColorHint="#f0f0f0"
-            android:layout_marginLeft="3dp"/>
+            android:textColorHint="#f0f0f0" />
 
         <ImageView
             android:id="@+id/send"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_gravity="center"
             android:layout_marginStart="4dp"
             android:layout_marginLeft="4dp"
             android:layout_marginEnd="4dp"
@@ -59,10 +60,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/backArrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/btn_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -95,39 +97,6 @@
                 app:layout_constraintStart_toEndOf="@+id/profile_image"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:layout_marginRight="15dp"
-                android:src="@drawable/call"
-                app:tint="#FFFFFF"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView4"
-                app:layout_constraintEnd_toStartOf="@+id/imageView5"
-                app:layout_constraintTop_toTopOf="@+id/imageView4" />
-
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:layout_marginRight="15dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageView3"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/videocall" />
-
-            <ImageView
-                android:id="@+id/imageView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:layout_marginRight="15dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/menu" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -14,6 +14,8 @@
 
     <color name="darktheme">#222D3C</color>
     <color name="darkbackground">#151F27</color>
+    <color name="btn_color">#222D3C</color>
+
 
 
     <color name="lightGrey">#EDEDED</color>

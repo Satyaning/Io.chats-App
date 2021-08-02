@@ -1,4 +1,4 @@
-package com.example.iochat.Fragments;
+package com.example.iochat.Apps.Fragments;
 
 import android.os.Bundle;
 
@@ -10,10 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.iochat.Adapters.UserAdapter;
-import com.example.iochat.Models.Users;
-import com.example.iochat.R;
+import com.example.iochat.Apps.Adapters.UserAdapter;
+import com.example.iochat.Apps.Models.Users;
 import com.example.iochat.databinding.FragmentChatsBinding;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -54,7 +54,8 @@ public class ChatsFragment extends Fragment {
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()){
                     Users users = dataSnapshot.getValue(Users.class);
                     users.setUserId(dataSnapshot.getKey());
-                    list.add(users);
+                    if(!users.getUserId().equals(FirebaseAuth.getInstance().getUid())){
+                    list.add(users);}
                 }
                 adapter.notifyDataSetChanged();
             }
